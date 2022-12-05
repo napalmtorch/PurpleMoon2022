@@ -16,7 +16,7 @@ namespace PurpleMoon.HAL
         public ulong TPS               { get; private set; }
         public long  Milliseconds      { get; private set; }
         public long  TotalMilliseconds { get; private set; }
-        public float TotalSeconds      { get { return (float)TotalMilliseconds / 1000.0f; } }
+        public float TotalSeconds      { get { return TotalMilliseconds > 0 ? (float)TotalMilliseconds / 1000.0f : 0; } }
 
         private Cosmos.Core.IOGroup.PIT _ports;
         private ulong                   _ticks, _timer;
@@ -26,11 +26,13 @@ namespace PurpleMoon.HAL
             Cosmos.Core.INTs.SetIrqHandler(0x00, null);
             Cosmos.HAL.Global.PIT = null;
 
+            TPS               = 0;
             Frequency         = 0;
             Ticks             = 0;
             Milliseconds      = 0;
             TotalMilliseconds = 0;
             _ticks            = 0;
+            _timer            = 0;
             _ports            = new Cosmos.Core.IOGroup.PIT();
         }
 

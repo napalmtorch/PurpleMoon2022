@@ -7,6 +7,7 @@ using PurpleMoon.Core;
 using PurpleMoon.HAL;
 using PurpleMoon.Graphics;
 using PurpleMoon.Multitasking;
+using PurpleMoon.GUI;
 
 namespace PurpleMoon.Services
 {
@@ -16,24 +17,28 @@ namespace PurpleMoon.Services
         public Color BackColor;
         public Color ForeColor;
         public float Delta { get { return _delta; } }
+        public string DebugText;
 
         private int   _fps, _frames, _last, _tps, _ticks;
         private float _timer, _delta, _tl, _tn;
 
-        GUI.Container cont;
+        Window window;
+        Button btn;
 
         public WindowManager() : base("winmgr")
         {
             BackBuffer = new Image(Renderer.GetSize().X, Renderer.GetSize().Y);
             BackColor = new Color(0xFF, 0x3A, 0x6E, 0xA5);
             ForeColor = new Color(0xFF, 0xFF, 0xFF, 0xFF);
-
-            cont = new GUI.Container(100, 100, 320, 240, "Container");
         }
-
+        
         public override void Start()
         {
             base.Start();
+
+            window = new Window(150, 50, 320, 240, "Demo Window");
+            btn = new Button(32, 32, "Button", window);
+            window.AddControl(btn);
         }
 
         public override void Stop()
@@ -59,14 +64,16 @@ namespace PurpleMoon.Services
             _delta  = (float)(_tn - _tl);
             _timer += _delta;
 
-            if (_timer >= 0.016f)
+            if (_timer >= 0.0166667f)
             {
                 _timer = 0;
                 _frames++;
 
-                cont.Update();
+                if (Assets.ImageExists("BG")) { BackBuffer.Swap(Assets.GetImage("BG")); }
+                else { BackBuffer.Clear(BackColor); }
 
-                BackBuffer.Clear(BackColor);
+                window.Update();
+                window.Draw();
 
                 int y = 0;
                 BackBuffer.DrawString(0,  y, "FPS   : " + _fps, Color.White, Color.Transparent, Assets.GetFont("Default"));
@@ -76,8 +83,7 @@ namespace PurpleMoon.Services
                 BackBuffer.DrawString(0,  y, "VID   : " + Renderer.Device.GetName(), Color.White, Color.Transparent, Assets.GetFont("Default")); y += 16;
                 BackBuffer.DrawString(0,  y, "RAM   : " + (Cosmos.Core.GCImplementation.GetUsedRAM() / 1048576) + "/" + Cosmos.Core.GCImplementation.GetAvailableRAM() + "MB", Color.White, Color.Transparent, Assets.GetFont("Default")); y += 16;
                 BackBuffer.DrawString(0,  y, "GC'D  : " + Kernel.GCollectCount.ToString(), Color.White, Color.Transparent, Assets.GetFont("Default")); y += 16;
-
-                cont.Draw();
+                BackBuffer.DrawString(0,  y, DebugText, Color.White, Color.Transparent, Assets.GetFont("Default")); y += 16;
 
                 Mouse ms = (Mouse)Kernel.DriverMgr.Fetch("Mouse");
                 if (ms != null) { ms.Draw(); }

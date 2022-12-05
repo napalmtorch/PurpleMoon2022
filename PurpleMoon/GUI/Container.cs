@@ -20,16 +20,27 @@ namespace PurpleMoon.GUI
             this.Controls   = new List<Control>();
             this.Buffer     = new Image(w, h);
             this._draw_base = true;
+            Invalidate();
+            Draw();
         }
 
         public Container(int x, int y, int w, int h, string name, ControlType type, Container parent) : this(x, y, w, h, name, parent)
         {
-            this.Type = type;
+            this.Type       = type;
+            this.Controls   = new List<Control>();
+            this.Buffer     = new Image(w, h);
+            this._draw_base = true;
         }
 
         public override void Update()
         {
             base.Update();
+
+            for (int i = 0; i < Controls.Count; i++)
+            {
+                Controls[i].Update();
+            }
+       
         }
 
         public override void Draw()
@@ -41,12 +52,23 @@ namespace PurpleMoon.GUI
                 if (Flags.Invalidated)
                 {
                     Buffer.Clear(Theme.GetColor(ColorIndex.Background));
-                    Buffer.DrawRectPopup(0, 0, Bounds.W, Bounds.H, Theme.GetColor(ColorIndex.BorderTopLeft), Theme.GetColor(ColorIndex.BorderBottomRight), Theme.GetColor(ColorIndex.BorderInner));
+                    if (Theme.Border == BorderStyle.Fixed3D) { Buffer.DrawRectPopup(0, 0, Bounds.W, Bounds.H, Theme.GetColor(ColorIndex.BorderTopLeft), Theme.GetColor(ColorIndex.BorderBottomRight), Theme.GetColor(ColorIndex.BorderInner)); }
+
+                    for (int i = 0; i < Controls.Count; i++)
+                    {
+                        Controls[i].Draw();
+                    }
 
                     Flags.Invalidated = false;
                 }
                 Kernel.WindowMgr.BackBuffer.Draw(Bounds, Buffer.Data);
             }
+        }
+
+        public void AddControl(Control control)
+        {
+            Controls.Add(control);
+            Invalidate();
         }
     }
 }

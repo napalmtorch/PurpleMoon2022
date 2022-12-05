@@ -82,6 +82,7 @@ namespace PurpleMoon.GUI
         public void Invalidate()
         {
             Flags.Invalidated = true;
+            if (Parent != null) { Parent.Invalidate(); }
         }
     }
 }

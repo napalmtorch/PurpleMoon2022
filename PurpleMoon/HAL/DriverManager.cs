@@ -46,7 +46,7 @@ namespace PurpleMoon.HAL
 
         private void Detect()
         {
-            DetectVideo(true);
+            DetectVideo();
 
             Install(new PIT(), true);
             Install(new Keyboard(), true);

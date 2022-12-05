@@ -22,7 +22,7 @@
         <DebugMode>None</DebugMode>
         <VMWareEdition>Player</VMWareEdition>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <CompileVBEMultiboot>True</CompileVBEMultiboot>
+        <CompileVBEMultiboot>False</CompileVBEMultiboot>
         <VBEResolution>800x600x32</VBEResolution>
     </PropertyGroup>
 

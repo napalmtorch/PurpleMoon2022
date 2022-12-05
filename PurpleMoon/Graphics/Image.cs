@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PurpleMoon.Core;
 using PurpleMoon.HAL;
+using PurpleMoon.Lib;
 
 namespace PurpleMoon.Graphics
 {
@@ -18,6 +19,61 @@ namespace PurpleMoon.Graphics
             this.Size = new Point(w, h);
             this.Data = new uint[w * h];
         }
+
+        public Image(string fname) { Load(fname); }
+
+        public void Load(string fname)
+        {
+            Debug.Info("Attempting to load bitmap at '%s'", fname);
+            BinaryStream stream = new BinaryStream(fname);
+            stream.Seek(14);
+            int size = stream.ReadInt(), w = stream.ReadInt(), h = stream.ReadInt();
+            ushort planes = stream.ReadUShort(), bpp = stream.ReadUShort();
+            if (w == 0 || h == 0) { Debug.Panic("Invalid size while loading bitmap - %dx%d", w, h); return; }
+
+            stream.Seek(10);
+            uint off_bits = stream.ReadUInt();
+            Debug.Info("Bitmap - Size:%dx%d Planes:%d BPP:%d, Offset:%p", w, h, planes, bpp, off_bits);
+
+            this.Size = new Point(w, h);
+            this.Data = new uint[w * h];
+
+            for (int yy = h - 1; yy >= 0; yy--)
+            {
+                for (int xx = 0; xx < w; xx++)
+                {
+                    uint o = (uint)(4 * (yy * w + xx));
+                    uint c = (uint)((0xFF << 24) | (stream.Data[off_bits + o + 2] << 16) | (stream.Data[off_bits + o + 1] << 8) | stream.Data[off_bits + o]);
+                    uint d = (uint)(xx + ((h - yy - 1) * w));
+                    Data[d] = c;
+                }
+            }
+            Debug.Info("Successfully loaded bitmap - Size:%dx%d File:%s", w, h, fname);
+        }
+
+        public void Resize(int w, int h)
+        {
+            if (w == Size.X && h == Size.Y) { return; }
+            uint[] data = new uint[w * h];
+            double xr = (double)Size.X / (double)w;
+            double yr = (double)Size.Y / (double)h;
+
+            int i, j, px, py;
+            for (i = 0; i < h; i++)
+            {
+                for (j = 0; j < w; j++)
+                {
+                    px = (int)Math.Floor(j * xr);
+                    py = (int)Math.Floor(i * yr);
+                    data[i * w + j] = Data[py * Size.X + px];
+                }
+            }
+            Data = null;
+            Data = data;
+            Size = new Point(w, h);
+        }
+
+        public void Swap(Image image) { Cosmos.Core.MemoryOperations.Copy(Data, image.Data); }
 
         public void Clear(Color color)
         {

@@ -16,5 +16,9 @@ namespace PurpleMoon
         public Point(int x, int y) { X = x; Y = y; }
 
         public bool Equals(Point p) { return (X == p.X && Y == p.Y); }
+
+        public void Add(Point p)      { X += p.X; Y += p.Y; }
+        public void Add(int value)    { X += value; Y += value; }
+        public void Add(int x, int y) { X += x; Y += y; }
     }
 }

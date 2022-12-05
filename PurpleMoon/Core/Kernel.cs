@@ -30,12 +30,11 @@ namespace PurpleMoon.Core
             ProcessManager.Initialize();
             ProcessManager.Load(DriverMgr = new DriverManager(), true);
 
-            Assets.Initialize();
             Renderer.Initialize();
+            Assets.Initialize();
 
             WindowMgr = new WindowManager();
             ProcessManager.Load(WindowMgr, true);
-
         }
 
         protected override void Run()

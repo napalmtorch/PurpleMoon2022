@@ -92,8 +92,9 @@ namespace PurpleMoon.Core
                 Renderer.Update();
                 Halt();
             }
-            else
+            else if (!Renderer.Enabled || Renderer.Device.Type == HAL.VideoDevice.VMWareSVGAII)
             {
+                if (Renderer.Device.Type == HAL.VideoDevice.VMWareSVGAII) { Renderer.Device.Stop(); }
                 Console.Clear();
                 WriteHeader("  !!  ", ConsoleColor.Red);
                 Write(fmt, args);

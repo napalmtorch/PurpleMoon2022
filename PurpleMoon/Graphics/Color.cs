@@ -43,5 +43,6 @@ namespace PurpleMoon.Graphics
         public static Color Black        { get; private set; } = new Color(0xFF, 0x00, 0x00, 0x00);
         public static Color White        { get; private set; } = new Color(0xFF, 0xFF, 0xFF, 0xFF);
         public static Color Magenta      { get; private set; } = new Color(0xFF, 0xFF, 0x00, 0xFF);
+        public static Color Red          { get; private set; } = new Color(0xFF, 0xFF, 0x00, 0x00);
     }
 }

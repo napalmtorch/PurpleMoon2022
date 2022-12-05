@@ -25,6 +25,8 @@ namespace PurpleMoon.Graphics
             _images    = new List<Image>();
 
             LoadFont("Default", new PCScreenFont("0:\\sys\\res\\fonts\\font16.psf", Point.Zero));
+            LoadImage("BG", new Image("0:\\sys\\res\\wallpapers\\moon.bmp"));
+            GetImage("BG").Resize(Renderer.GetSize().X, Renderer.GetSize().Y);
         }
 
         public static void LoadFont(string id, PCScreenFont font)
@@ -37,10 +39,10 @@ namespace PurpleMoon.Graphics
 
         public static void LoadImage(string id, Image img)
         {
-            if (FontExists(id)) { Debug.Panic("Image with id '%s' already exists", id); return; }
+            if (ImageExists(id)) { Debug.Panic("Image with id '%s' already exists", id); return; }
             _image_ids.Add(id);
             _images.Add(img);
-            Debug.Info("Registered font - Size:%dx%d ID:%s", img.Size.X, img.Size.Y, id);
+            Debug.Info("Registered image - Size:%dx%d ID:%s", img.Size.X, img.Size.Y, id);
         }
 
         public static PCScreenFont GetFont(string id)
@@ -55,11 +57,11 @@ namespace PurpleMoon.Graphics
 
         public static Image GetImage(string id)
         {
-            for (int i = 0; i < _font_ids.Count; i++)
+            for (int i = 0; i < _image_ids.Count; i++)
             {
-                if (_font_ids[i] == id) { return _images[i]; }
+                if (_image_ids[i] == id) { return _images[i]; }
             }
-            Debug.Panic("No font with id '%s' exists", id);
+            Debug.Panic("No image with id '%s' exists", id);
             return null;
         }
 
